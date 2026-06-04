@@ -72,7 +72,6 @@ router.get("/", async (ctx) => {
   ctx.response.type = "text/html";
   ctx.response.body = await handle.renderView("gallery", {
     title: catalog.channel ?? "Video Library",
-    channel: catalog.channel ?? "Video Library",
     count: catalog.videos.length,
     videos,
     query,
