@@ -1,0 +1,14 @@
+services:
+  mirror:
+    build: .
+    image: offline-youtube-mirror
+    container_name: oym
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      # Put your downloaded library/ folder next to this file before starting.
+      - ./library:/library:ro
+    environment:
+      LIBRARY_DIR: /library
+      PORT: "8080"

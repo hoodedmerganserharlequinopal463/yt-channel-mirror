@@ -1,0 +1,20 @@
+{
+  "name": "offline-youtube-mirror",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Download a YouTube channel and self-host it for offline LAN/WAN viewing.",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspace @oym/shared && npm run build --workspace @oym/web && npm run build --workspace @oym/server",
+    "download": "npm run build --workspace @oym/shared && npm run start --workspace @oym/downloader --",
+    "server": "npm run build --workspace @oym/shared && npm run start --workspace @oym/server",
+    "dev:web": "npm run dev --workspace @oym/web",
+    "dev:server": "npm run build --workspace @oym/shared && npm run dev --workspace @oym/server"
+  },
+  "engines": {
+    "node": ">=22.6"
+  }
+}

@@ -1,0 +1,11 @@
+node_modules/
+dist/
+*.tsbuildinfo
+
+# The media library is large and machine-specific; never commit it.
+library/
+!library/.gitkeep
+
+.DS_Store
+*.log
+.env
