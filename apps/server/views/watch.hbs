@@ -1,0 +1,19 @@
+<div class="page watch">
+  <a href="/" class="back">← Back to library</a>
+
+  <article class="player-wrap">
+    <video
+      class="player"
+      src="/media/{{video.id}}/video"
+      {{#if video.thumb}}poster="/media/{{video.id}}/thumb"{{/if}}
+      controls
+      autoplay
+      playsinline
+    ></video>
+    <h1 class="title">{{video.title}}</h1>
+    <p class="meta">{{formatDate video.uploadDate}}</p>
+    {{#if video.description}}
+      <pre class="description">{{video.description}}</pre>
+    {{/if}}
+  </article>
+</div>

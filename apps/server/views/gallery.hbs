@@ -1,0 +1,51 @@
+<div class="page">
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">▶</span>
+      <div>
+        <h1>{{channel}}</h1>
+        <p class="sub">{{count}} videos available offline</p>
+      </div>
+    </div>
+    <form class="controls" method="get" action="/">
+      <input
+        class="search"
+        type="search"
+        name="q"
+        placeholder="Search videos…"
+        value="{{query}}"
+      />
+      <select class="sort" name="sort" onchange="this.form.submit()">
+        <option value="newest" {{#if (eq sort "newest")}}selected{{/if}}>Newest</option>
+        <option value="oldest" {{#if (eq sort "oldest")}}selected{{/if}}>Oldest</option>
+        <option value="title" {{#if (eq sort "title")}}selected{{/if}}>Title A–Z</option>
+      </select>
+      <button class="sort" type="submit">Search</button>
+    </form>
+  </header>
+
+  {{#unless videos.length}}
+    <div class="banner">No videos match your search.</div>
+  {{/unless}}
+
+  <div class="grid">
+    {{#each videos}}
+      <a href="/watch/{{id}}" class="card">
+        <div class="thumb-wrap">
+          {{#if thumb}}
+            <img loading="lazy" src="/media/{{id}}/thumb" alt="" />
+          {{else}}
+            <div class="thumb-placeholder">▶</div>
+          {{/if}}
+          {{#if durationSec}}
+            <span class="duration">{{formatDuration durationSec}}</span>
+          {{/if}}
+        </div>
+        <div class="card-body">
+          <h3 title="{{title}}">{{title}}</h3>
+          <p class="meta">{{formatDate uploadDate}}</p>
+        </div>
+      </a>
+    {{/each}}
+  </div>
+</div>
