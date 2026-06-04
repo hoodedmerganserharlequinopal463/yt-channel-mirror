@@ -1,20 +1,12 @@
 import { Application, Router, send } from "oak";
 import { Handlebars } from "handlebars";
-import { resolve } from "jsr:@std/path";
+import { resolve } from "@std/path";
 import { CatalogStore } from "./catalog.ts";
+import { loadConfig } from "./config.ts";
 
 const dirname = import.meta.dirname!;
-
-const libraryDir = resolve(
-  Deno.env.get("LIBRARY_DIR") ?? resolve(dirname, "../../library"),
-);
-const port = Number(Deno.env.get("PORT") ?? 8080);
-// 0.0.0.0 so it is reachable from other machines on the WAN.
-const hostname = Deno.env.get("HOST") ?? "0.0.0.0";
-
+const { hostname, port, libraryDir } = loadConfig();
 const store = new CatalogStore(libraryDir);
-
-// ---- Handlebars view helpers (mirror the old React `api.ts` formatters) ----
 
 function formatDuration(sec: number): string {
   if (!sec) return "";
@@ -152,5 +144,6 @@ try {
 } catch {
   console.warn("No catalog.json found in the library directory yet.");
 }
+
 console.log(`Listening on http://${hostname}:${port}`);
 await app.listen({ port, hostname });

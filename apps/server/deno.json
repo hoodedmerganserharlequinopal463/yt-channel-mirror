@@ -1,11 +1,21 @@
 {
+  "name": "@oym/server",
+  "version": "1.0.0",
+  "exports": "./main.ts",
   "tasks": {
-    "start": "deno run --allow-net --allow-read --allow-env main.ts",
-    "dev": "deno run --watch --allow-net --allow-read --allow-env main.ts"
+    "start": "deno run -P=server main.ts",
+    "dev": "deno run --watch -P=server main.ts"
+  },
+  "permissions": {
+    "server": {
+      "net": true,
+      "read": true,
+      "env": true
+    }
   },
   "imports": {
-    "handlebars": "jsr:@danet/handlebars@^0.0.3",
-    "oak": "jsr:@oak/oak@^17.2.0"
+    "handlebars": "jsr:@danet/handlebars@0.0.3",
+    "oak": "jsr:@oak/oak@17.2.0"
   },
   "fmt": {
     "exclude": ["library", "dist"]

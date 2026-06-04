@@ -1,0 +1,9 @@
+{
+  "workspace": ["./apps/downloader", "./apps/server"],
+  "imports": {
+    "@std/path": "jsr:@std/path@1.1.5"
+  },
+  "fmt": {
+    "exclude": ["library", "apps/downloader/library", "apps/server/library"]
+  }
+}
