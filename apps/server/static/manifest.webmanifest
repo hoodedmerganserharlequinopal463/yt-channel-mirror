@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+  "start_url": "/",
+  "name": "FullstacksJS Videos",
+  "short_name": "FullstacksJS",
+  "description": "A mirror of the FullstacksJS YouTube channel",
+  "theme_color": "#F39F47",
+  "background_color": "#212025",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/static/maskable_icon_x48.png",
+      "sizes": "48x48",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/maskable_icon_x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/maskable_icon_x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

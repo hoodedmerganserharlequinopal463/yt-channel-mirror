@@ -51,7 +51,6 @@ router.get("/api/health", (ctx) => {
   ctx.response.body = { ok: true };
 });
 
-// Gallery: server-side rendered list with search + sort via query params.
 router.get("/", async (ctx) => {
   const params = ctx.request.url.searchParams;
   const query = (params.get("q") ?? "").trim();
@@ -72,7 +71,7 @@ router.get("/", async (ctx) => {
 
   ctx.response.type = "text/html";
   ctx.response.body = await handle.renderView("gallery", {
-    title: catalog.channel ?? "Video Library",
+    title: "FullstacksJS - Video Library",
     count: catalog.videos.length,
     videos,
     query,
@@ -80,7 +79,6 @@ router.get("/", async (ctx) => {
   });
 });
 
-// Watch page: server-side rendered player + metadata.
 router.get("/watch/:id", async (ctx) => {
   const video = await store.getById(ctx.params.id);
   if (!video) {
@@ -98,7 +96,6 @@ router.get("/watch/:id", async (ctx) => {
   });
 });
 
-// Stream the video file with HTTP Range support (oak's send handles 206).
 router.get("/media/:id/video", async (ctx) => {
   const video = await store.getById(ctx.params.id);
   if (!video) {
