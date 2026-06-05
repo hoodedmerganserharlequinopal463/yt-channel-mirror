@@ -1,4 +1,5 @@
 import { Application, Router, send } from "oak";
+// @ts-expect-error: no types for handlebars yet
 import { Handlebars } from "handlebars";
 import { resolve } from "@std/path";
 import { CatalogStore } from "./catalog.ts";
