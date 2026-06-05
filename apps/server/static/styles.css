@@ -6,6 +6,7 @@
   --muted: #9aa0aa;
   --accent: #ff4d4d;
   --border: #2a2e38;
+  --error: #ff9b9b;
 
   --radius: 8px;
   --radius-sm: 4px;
@@ -40,6 +41,10 @@ body {
 
 p {
   margin: 0;
+}
+
+button {
+  color: inherit;
 }
 
 h1,
@@ -86,7 +91,6 @@ a {
   aspect-ratio: 1 / 1;
   border-radius: var(--radius);
   background: var(--accent);
-  color: #fff;
   font-size: var(--fs-lg);
 }
 
@@ -111,7 +115,6 @@ a {
 .sort {
   background: var(--surface);
   border: 1px solid var(--border);
-  color: var(--text);
   border-radius: var(--radius);
   padding: 10px 14px;
   font-size: var(--fs-md);
@@ -134,7 +137,7 @@ a {
 }
 
 .banner.error {
-  color: #ff9b9b;
+  color: var(--error);
 }
 
 .grid {
@@ -167,7 +170,6 @@ a {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  display: block;
 }
 
 .thumb-placeholder {
@@ -184,7 +186,6 @@ a {
   right: 8px;
   bottom: 8px;
   background: rgba(0, 0, 0, 0.82);
-  color: #fff;
   font-size: var(--fs-sm);
   font-weight: 600;
   padding: 2px 6px;
@@ -198,8 +199,7 @@ a {
 .card-body h3 {
   margin: 0 0 4px;
   font-size: var(--fs-md);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -208,17 +208,6 @@ a {
   margin: 0;
   color: var(--muted);
   font-size: var(--fs-sm);
-}
-
-.back {
-  display: inline-block;
-  margin-bottom: 16px;
-  color: var(--muted);
-  font-size: var(--fs-md);
-}
-
-.back:hover {
-  color: var(--text);
 }
 
 .player-wrap {
@@ -250,7 +239,6 @@ a {
   font-family: inherit;
   font-size: var(--fs-md);
   line-height: var(--lh-lg);
-  color: var(--text);
 }
 
 @media screen and (width < 580px) {
