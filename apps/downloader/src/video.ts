@@ -1,14 +1,6 @@
-/**
- * Shared contract between the downloader (which produces a library) and the
- * server (which serves it). The library is a folder on disk:
- *
- *   library/
- *     catalog.json            <- Catalog (the index of everything)
- *     <videoId>/
- *       video.mp4
- *       thumb.jpg
- *       info.json             <- raw yt-dlp metadata (not served directly)
- */
+import * as path from "@std/path";
+import { isString } from "@fullstacksjs/toolbox";
+import { parseYtDate } from "./utils.ts";
 
 export const CATALOG_VERSION = 1 as const;
 
@@ -30,7 +22,6 @@ export interface VideoMeta {
   sizeBytes: number;
 }
 
-/** The whole library index, written to catalog.json. */
 export interface Catalog {
   version: typeof CATALOG_VERSION;
   /** ISO timestamp of when the catalog was last generated. */
@@ -42,3 +33,49 @@ export interface Catalog {
 
 /** Slim shape returned by the list endpoint (omits description for payload size). */
 export type VideoSummary = Omit<VideoMeta, "description">;
+
+/** Build a VideoMeta from raw yt-dlp info and resolved file paths. */
+export function createVideoMeta({
+  dir,
+  info,
+  root,
+  videoPath,
+  thumbPath,
+  sizeBytes,
+}: {
+  info: Record<string, unknown>;
+  dir: string;
+  root: string;
+  videoPath: string;
+  sizeBytes: number;
+  thumbPath: string | undefined;
+}): VideoMeta {
+  const { id, description = "", upload_date } = info;
+  if (!isString(id)) {
+    throw new Error(`Invalid video id in info.json for ${dir}`);
+  }
+  if (!isString(description)) {
+    throw new Error(`Invalid description in info.json for ${dir}`);
+  }
+
+  const rawDate = isString(upload_date) ? upload_date : null;
+  const uploadDate = parseYtDate(rawDate);
+
+  const thumb = thumbPath
+    ? path.relative(root, path.join(dir, thumbPath))
+    : null;
+  const file = path.relative(root, videoPath);
+
+  return {
+    id,
+    title: isString(info.title) ? info.title : id,
+    description,
+    durationSec: typeof info.duration === "number"
+      ? Math.round(info.duration)
+      : 0,
+    uploadDate,
+    file,
+    thumb,
+    sizeBytes,
+  };
+}

@@ -17,7 +17,7 @@ function parseCliArgs(argv: string[]): Args {
   const parsed = parseArgs(argv, {
     string: ["channel", "out", "limit", "label", "playlist"],
     boolean: ["catalog-only", "help"],
-    alias: { c: "channel", o: "out", n: "limit", h: "help" },
+    alias: { c: "channel", o: "out", n: "limit", h: "help", p: "playlist" },
     default: { out: "./library", "catalog-only": false },
     unknown: (arg) => {
       if (arg.startsWith("-")) {
@@ -55,7 +55,8 @@ Usage:
   oym-download --catalog-only --out ./library
 
 Options:
-  -c, --channel <url>   Channel / playlist / video URL to download
+  -c, --channel <url>   Channel video URL to download
+  -p, --playlist <url>  Download a playlist and build playlist.json (instead of catalog.json)
   -o, --out <dir>       Library output directory (default: ./library)
   -n, --limit <N>       Only fetch the N most recent videos
       --label <text>    Friendly channel name shown in the web UI
@@ -99,10 +100,7 @@ async function main(): Promise<void> {
   }
 
   console.log("Building catalog.json ...");
-  const catalog = await buildCatalog(
-    libraryDir,
-    channelLabel,
-  );
+  const catalog = await buildCatalog(libraryDir, channelLabel);
   console.log(`Done. ${catalog.videos.length} video(s) in the library.`);
   console.log(
     `Copy the folder "${libraryDir}" to your server, then run docker compose up -d.`,

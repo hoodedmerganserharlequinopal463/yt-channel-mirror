@@ -1,5 +1,11 @@
-import { join, relative } from "@std/path";
-import { type Catalog, CATALOG_VERSION, type VideoMeta } from "./video.ts";
+import * as path from "@std/path";
+import { findFileByExt, readDirFiles, readInfoJson } from "./utils.ts";
+import {
+  type Catalog,
+  CATALOG_VERSION,
+  createVideoMeta,
+  type VideoMeta,
+} from "./video.ts";
 
 export const VIDEO_EXTS = [".mp4", ".m4v", ".webm", ".mkv"];
 export const IMAGE_EXTS = [".jpg", ".jpeg", ".png", ".webp"];
@@ -48,7 +54,7 @@ export interface DownloadOptions {
  * skipping anything already recorded in the download archive.
  */
 export async function downloadChannel(opts: DownloadOptions): Promise<void> {
-  const archive = join(opts.libraryDir, "archive.txt");
+  const archive = path.join(opts.libraryDir, "archive.txt");
 
   const args = [
     // Browser-native first; fall back to any mp4, then anything, remuxing to mp4.
@@ -84,66 +90,39 @@ export async function downloadChannel(opts: DownloadOptions): Promise<void> {
   await run("yt-dlp", args);
 }
 
-export function findFileByExt(
-  files: string[],
-  exts: string[],
-): string | undefined {
-  return files.find((f) => exts.some((e) => f.toLowerCase().endsWith(e)));
-}
-
 /** Scan the library folder and (re)build catalog.json from each video's info.json. */
 export async function buildCatalog(
   libraryDir: string,
   channelLabel: string | null,
 ): Promise<Catalog> {
   const videos: VideoMeta[] = [];
+  const allDirs = (await Array.fromAsync(Deno.readDir(libraryDir))).filter(
+    (e) => e.isDirectory,
+  );
 
-  for await (const entry of Deno.readDir(libraryDir)) {
-    if (!entry.isDirectory) continue;
-
-    const dir = join(libraryDir, entry.name);
-    const files: string[] = [];
-    for await (const f of Deno.readDir(dir)) {
-      files.push(f.name);
-    }
+  for (const entry of allDirs) {
+    const dir = path.join(libraryDir, entry.name);
+    const files = await readDirFiles(dir);
 
     const videoFile = findFileByExt(files, VIDEO_EXTS);
     if (!videoFile) continue; // incomplete download, skip
 
-    const infoFile = files.find((f) => f.endsWith(".info.json"));
-    const thumbFile = findFileByExt(files, IMAGE_EXTS);
+    const thumbPath = findFileByExt(files, IMAGE_EXTS);
+    const info = await readInfoJson(dir, files);
 
-    let info: Record<string, unknown> = {};
-    if (infoFile) {
-      try {
-        info = JSON.parse(await Deno.readTextFile(join(dir, infoFile)));
-      } catch {
-        // ignore malformed info json; fall back to defaults below
-      }
-    }
-
-    const videoPath = join(dir, videoFile);
+    const videoPath = path.join(dir, videoFile);
     const sizeBytes = (await Deno.stat(videoPath)).size;
 
-    const rawDate = typeof info.upload_date === "string"
-      ? info.upload_date
-      : null;
-    const uploadDate = rawDate && /^\d{8}$/.test(rawDate)
-      ? `${rawDate.slice(0, 4)}-${rawDate.slice(4, 6)}-${rawDate.slice(6, 8)}`
-      : null;
-
-    videos.push({
-      id: typeof info.id === "string" ? info.id : entry.name,
-      title: typeof info.title === "string" ? info.title : entry.name,
-      description: typeof info.description === "string" ? info.description : "",
-      durationSec: typeof info.duration === "number"
-        ? Math.round(info.duration)
-        : 0,
-      uploadDate,
-      file: relative(libraryDir, videoPath),
-      thumb: thumbFile ? relative(libraryDir, join(dir, thumbFile)) : null,
+    const video = createVideoMeta({
+      info,
+      dir,
+      root: libraryDir,
+      videoPath,
+      thumbPath,
       sizeBytes,
     });
+
+    videos.push(video);
   }
 
   // Newest first when dates are known.
@@ -157,7 +136,7 @@ export async function buildCatalog(
   };
 
   await Deno.writeTextFile(
-    join(libraryDir, "catalog.json"),
+    path.join(libraryDir, "catalog.json"),
     JSON.stringify(catalog, null, 2),
   );
 

@@ -5,6 +5,7 @@
     "use-hooks": "./scripts/hooks/init"
   },
   "imports": {
+    "@fullstacksjs/toolbox": "npm:@fullstacksjs/toolbox@4.22.0",
     "@std/cli": "jsr:@std/cli@1.0.30",
     "@std/path": "jsr:@std/path@1.1.5"
   },

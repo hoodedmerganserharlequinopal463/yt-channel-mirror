@@ -1,5 +1,11 @@
 import { join, relative } from "@std/path";
-import { findFileByExt, IMAGE_EXTS, run } from "./lib.ts";
+import { IMAGE_EXTS, run } from "./lib.ts";
+import {
+  findFileByExt,
+  parseYtDate,
+  readDirFiles,
+  readInfoJson,
+} from "./utils.ts";
 
 export interface Playlist {
   id: string;
@@ -12,9 +18,13 @@ export interface Playlist {
   modifiedDate: string | null;
 }
 
-export const getPlaylist = async (
-  { playlistUrl, libraryDir }: { playlistUrl: string; libraryDir: string },
-) => {
+export const getPlaylist = async ({
+  playlistUrl,
+  libraryDir,
+}: {
+  playlistUrl: string;
+  libraryDir: string;
+}) => {
   const videoIdsPathArg = join(libraryDir, "%(playlist_id)s/video_ids.txt");
   const outputArg = join(libraryDir, "%(playlist_id)s/%(playlist_id)s.%(ext)s");
   const args = [
@@ -34,55 +44,38 @@ export const getPlaylist = async (
   await run("yt-dlp", args);
 };
 
-export const buildPlaylist = async (
-  { channelLabel, libraryDir }: {
-    libraryDir: string;
-    channelLabel: string | null;
-  },
-) => {
+export const buildPlaylist = async ({
+  channelLabel,
+  libraryDir,
+}: {
+  libraryDir: string;
+  channelLabel: string | null;
+}) => {
   const playlists: Playlist[] = [];
 
   for await (const entry of Deno.readDir(libraryDir)) {
     if (!entry.isDirectory) continue;
 
     const dir = join(libraryDir, entry.name);
-    const files: string[] = [];
-    for await (const f of Deno.readDir(dir)) {
-      files.push(f.name);
-    }
+    const files = await readDirFiles(dir);
 
     const videoIdsFilePath = findFileByExt(files, [".txt"]);
     if (!videoIdsFilePath) continue;
 
-    const infoFile = files.find((f) => f.endsWith(".info.json"));
     const thumbFile = findFileByExt(files, IMAGE_EXTS);
-
-    let info: Record<string, unknown> = {};
-    if (infoFile) {
-      try {
-        info = JSON.parse(await Deno.readTextFile(join(dir, infoFile)));
-      } catch {
-        // ignore malformed info json; fall back to defaults below
-      }
-    }
+    const info = await readInfoJson(dir, files);
     let videoIds: string[] = [];
     if (videoIdsFilePath) {
       try {
-        videoIds = (await Deno.readTextFile(join(dir, videoIdsFilePath))).split(
-          "\n",
-        ).filter((ln) => !!ln);
+        videoIds = (await Deno.readTextFile(join(dir, videoIdsFilePath)))
+          .split("\n")
+          .filter((ln) => !!ln);
       } catch {
         // ignore malformed info json; fall back to defaults below
       }
     }
 
-    const rawDate = typeof info.modified_date === "string"
-      ? info.modified_date
-      : null;
-
-    const modifiedDate = rawDate && /^\d{8}$/.test(rawDate)
-      ? `${rawDate.slice(0, 4)}-${rawDate.slice(4, 6)}-${rawDate.slice(6, 8)}`
-      : null;
+    const modifiedDate = parseYtDate(info.modified_date);
 
     playlists.push({
       id: typeof info.id === "string" ? info.id : entry.name,

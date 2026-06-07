@@ -19,6 +19,7 @@
     "jsr:@std/path@1.0.6": "1.0.6",
     "jsr:@std/path@1.1.5": "1.1.5",
     "jsr:@std/path@^1.0.6": "1.1.5",
+    "npm:@fullstacksjs/toolbox@4.22.0": "4.22.0",
     "npm:handlebars@4.7.7": "4.7.7",
     "npm:path-to-regexp@^6.3.0": "6.3.0"
   },
@@ -105,6 +106,9 @@
     }
   },
   "npm": {
+    "@fullstacksjs/toolbox@4.22.0": {
+      "integrity": "sha512-gr9YBfijzIMAAaqNQ8Wvdky+EH1oqRFTNLFU/xcJ4YoPurU1SeQDVjLsOKZiyBPgKAW62hedh7z1tdzcLqbrWw=="
+    },
     "handlebars@4.7.7": {
       "integrity": "sha512-aAcXm5OAfE/8IXkcZvCepKU3VzW1/39Fb5ZuqMtgI/hT8X2YgoMvBY5dLhq/cpOvw7Lk1nK/UF71aLG/ZnVYRA==",
       "dependencies": [
@@ -254,7 +258,8 @@
   "workspace": {
     "dependencies": [
       "jsr:@std/cli@1.0.30",
-      "jsr:@std/path@1.1.5"
+      "jsr:@std/path@1.1.5",
+      "npm:@fullstacksjs/toolbox@4.22.0"
     ],
     "members": {
       "apps/server": {
